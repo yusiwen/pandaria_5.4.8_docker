@@ -2,7 +2,7 @@ version: '3.9'
 
 x-pandaria-shared-conf: &pandaria-shared-conf
   environment:
-      - TZ=Europe/Stockholm
+      - TZ=Asia/Shanghai
   volumes:
     - "./etc:/opt/etc:rw"
     - "/etc/localtime:/etc/localtime:ro"
