@@ -1,4 +1,8 @@
 .DS_Store
+db/*
+!db/.keepfolder
+build/*
+!build/.keepfolder
 server/*
 !server/.keepfolder
 etc/*

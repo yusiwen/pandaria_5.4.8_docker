@@ -4,9 +4,9 @@ x-pandaria-shared-conf: &pandaria-shared-conf
   environment:
       - TZ=Asia/Shanghai
   volumes:
-    - "./etc:/opt/etc:rw"
     - "/etc/localtime:/etc/localtime:ro"
     - "/etc/timezone:/etc/timezone:ro"
+    - "./build:/opt/build:rw"
     - "./server:/opt/server:rw"
     - "${WOW_PATH}:/opt/wow:rw"
   restart: unless-stopped
@@ -54,7 +54,6 @@ services:
       - "/tmp:/tmp"
       - "./server:/opt/server:rw"
       - "${WOW_PATH}:/opt/wow:rw"
-      - "./etc:/opt/etc:rw"
     privileged: true
     ulimits:
       core: -1
@@ -72,6 +71,12 @@ services:
       context: containers/mariadb
       <<: *build-shared-conf
     <<: *pandaria-shared-conf
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "./server:/opt/server:rw"
+      - "./db:/var/lib/mysql:rw"
+      - "./build:/opt/build:rw"
     command: --max_allowed_packet=32505856
     # ports:
     #  - "3306:3306"
