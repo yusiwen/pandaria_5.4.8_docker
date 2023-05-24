@@ -9,7 +9,7 @@ WORKDIR /opt/wow
 
 # ENTRYPOINT [ "/bin/bash" ]
 
-# This is a vay to generate core dump files.
+# This is a way to generate core dump files.
 # See https://stackoverflow.com/a/69832851
 
 ENTRYPOINT [ "./mmaps_generator" ]

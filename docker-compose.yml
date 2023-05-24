@@ -7,7 +7,7 @@ x-pandaria-shared-conf: &pandaria-shared-conf
     - "/etc/localtime:/etc/localtime:ro"
     - "/etc/timezone:/etc/timezone:ro"
     - "./build:/opt/build:rw"
-    - "./server:/opt/server:rw"
+    - "vl-client-data:/opt/server/data:ro"
     - "${WOW_PATH}:/opt/wow:rw"
   restart: unless-stopped
   tty: true
@@ -19,18 +19,52 @@ x-build-shared-conf: &build-shared-conf
     GROUP_ID: ${GROUP_ID:-0}
 
 services:
+  clientdata:
+    image: pandaria-clientdata:${VERSION:-5.4.8-dev}
+    container_name: pandaria-clientdata
+    build:
+      context: .
+      dockerfile: containers/clientdata/Dockerfile
+      <<: *build-shared-conf
+    volumes:
+      - vl-client-data:/opt/server/data
+    command: ["sleep","infinity"]
+
   authserver:
-    image: pandaria:authserver
+    image: pandaria-authserver:${VERSION:-5.4.8-dev}
     container_name: pandaria-authserver
     build:
-      context: containers/authserver
+      context: .
+      dockerfile: containers/authserver/Dockerfile
       <<: *build-shared-conf
     <<: *pandaria-shared-conf
+    depends_on:
+      database:
+        condition: service_healthy
     ports:
       - "3724:3724"
+  
+  worldserver:
+    image: pandaria-worldserver:${VERSION:-5.4.8-dev}
+    container_name: pandaria-worldserver
+    build:
+      context: .
+      dockerfile: containers/worldserver/Dockerfile
+      <<: *build-shared-conf
+    <<: *pandaria-shared-conf
+    stdin_open: true
+    depends_on:
+      database:
+        condition: service_healthy
+      clientdata:
+        condition: service_started
+    ports:
+      - "3443:3443"
+      - "8085:8085"
+    # - "8086:8086"
 
   compile:
-    image: pandaria:compile
+    image: pandaria-compiler:${VERSION:-5.4.8-dev}
     env_file:
       - ./env/compile.env
       - ./env/mariadb.env
@@ -39,12 +73,16 @@ services:
       context: containers/compile
       <<: *build-shared-conf
     <<: *pandaria-shared-conf
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "./build:/opt/build:rw"
     restart: "no"
     profiles:
       - compile
 
   extractor:
-    image: pandaria:extractor
+    image: pandaria-extractor:${VERSION:-5.4.8-dev}
     container_name: pandaria-extractor
     build:
       context: containers/extractor
@@ -61,12 +99,12 @@ services:
     profiles:
       - extractor
 
-  mariadb:
-    image: pandaria:mariadb
+  database:
+    image: pandaria-database:${VERSION:-5.4.8-dev}
     env_file:
       - ./env/mariadb.env
-    container_name: pandaria-mariadb
-    hostname: pandaradb
+    container_name: pandaria-database
+    hostname: pandariadb
     build:
       context: containers/mariadb
       <<: *build-shared-conf
@@ -74,9 +112,13 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      - "./server:/opt/server:rw"
-      - "./db:/var/lib/mysql:rw"
+      - "./server/db:/var/lib/mysql:rw"
       - "./build:/opt/build:rw"
+    healthcheck:
+      test: '/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute "SHOW DATABASES;"'
+      interval: 2s
+      timeout: 40s
+      retries: 20
     command: --max_allowed_packet=32505856
     # ports:
     #  - "3306:3306"
@@ -86,27 +128,19 @@ services:
     ports:
       - "8080:80"
     environment:
-      - PMA_HOST=pandaradb
+      - PMA_HOST=pandariadb
       - PMA_USER=root
       - PMA_PASSWORD=pwd
     restart: "no"
     depends_on:
-      - mariadb
+      database:
+        condition: service_healthy
     profiles:
       - dev
-
-  worldserver:
-    image: pandaria:worldserver
-    container_name: pandaria-worldserver
-    build:
-      context: containers/worldserver
-      <<: *build-shared-conf
-    <<: *pandaria-shared-conf
-    ports:
-      - "3443:3443"
-      - "8085:8085"
-    # - "8086:8086"
 
 networks:
   default:
     name: pandaria-network
+
+volumes:
+  vl-client-data:

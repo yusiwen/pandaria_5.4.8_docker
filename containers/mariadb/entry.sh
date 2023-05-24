@@ -9,7 +9,6 @@ if [ ! -d "$SOURCE_PREFIX" ]; then
 	git config pull.rebase true
 else
     cd "$SOURCE_PREFIX" || return
-	git config --global --add safe.directory /opt/build/pandaria_5.4.8
 	git pull
 	cd /
 fi
