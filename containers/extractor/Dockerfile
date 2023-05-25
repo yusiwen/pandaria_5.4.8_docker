@@ -1,4 +1,6 @@
 FROM debian:bullseye-slim
+LABEL AUTHOR yusiwen@gmail.com
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y tzdata libssl1.1 libboost-all-dev libace-dev libreadline-dev

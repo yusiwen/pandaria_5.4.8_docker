@@ -1,4 +1,6 @@
 FROM debian:bullseye-slim as builder
+LABEL AUTHOR yusiwen@gmail.com
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \

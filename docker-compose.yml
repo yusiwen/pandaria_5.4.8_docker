@@ -20,7 +20,7 @@ x-build-shared-conf: &build-shared-conf
 
 services:
   clientdata:
-    image: pandaria-clientdata:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-clientdata:${VERSION:-5.4.8-dev}
     container_name: pandaria-clientdata
     build:
       context: .
@@ -31,7 +31,7 @@ services:
     command: ["sleep","infinity"]
 
   authserver:
-    image: pandaria-authserver:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-authserver:${VERSION:-5.4.8-dev}
     container_name: pandaria-authserver
     build:
       context: .
@@ -45,7 +45,7 @@ services:
       - "3724:3724"
   
   worldserver:
-    image: pandaria-worldserver:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-worldserver:${VERSION:-5.4.8-dev}
     container_name: pandaria-worldserver
     build:
       context: .
@@ -64,7 +64,7 @@ services:
     # - "8086:8086"
 
   compile:
-    image: pandaria-compiler:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-compiler:${VERSION:-5.4.8-dev}
     env_file:
       - ./env/compile.env
       - ./env/mariadb.env
@@ -82,7 +82,7 @@ services:
       - compile
 
   extractor:
-    image: pandaria-extractor:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-extractor:${VERSION:-5.4.8-dev}
     container_name: pandaria-extractor
     build:
       context: containers/extractor
@@ -100,7 +100,7 @@ services:
       - extractor
 
   database:
-    image: pandaria-database:${VERSION:-5.4.8-dev}
+    image: yusiwen/pandaria-database:${VERSION:-5.4.8-dev}
     env_file:
       - ./env/mariadb.env
     container_name: pandaria-database

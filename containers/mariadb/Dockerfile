@@ -1,4 +1,5 @@
 FROM mariadb:10.11
+LABEL AUTHOR yusiwen@gmail.com
 
 RUN apt-get update && apt-get -y install git unzip && rm -rf /var/lib/apt/lists/*
 
