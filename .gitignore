@@ -10,5 +10,6 @@ server/*
 !server/etc/.keepfolder
 !server/logs/.keepfolder
 !server/sql/.keepfolder
+backup
 *.sql
 *.bk

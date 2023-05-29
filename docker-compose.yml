@@ -113,6 +113,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
       - "./server/db:/var/lib/mysql:rw"
+      - "./backup:/backup/mysql:rw"
       - "./build:/opt/build:rw"
     healthcheck:
       test: '/usr/bin/mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --execute "SHOW DATABASES;"'
