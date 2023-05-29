@@ -28,7 +28,7 @@ mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "CREATE DATABASE characters"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "CREATE DATABASE fusion"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "CREATE DATABASE world"
 
-echo "Creat user"
+echo "Creating user"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "CREATE USER 'pandaria'@'%' IDENTIFIED BY 'pandaria';"
 
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON archive.* to 'pandaria'@'%';"
@@ -38,7 +38,7 @@ mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON fusion.* 
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "GRANT ALL PRIVILEGES ON world.* to 'pandaria'@'%';"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD -e "FLUSH PRIVILEGES;"
 
-echo "Populate database"
+echo "Populating database"
 unzip "$SOURCE_PREFIX"/sql/base/auth_*.zip -d /tmp
 unzip "$SOURCE_PREFIX"/sql/base/characters_*.zip -d /tmp
 unzip "$SOURCE_PREFIX"/sql/base/world_*.zip -d /tmp
@@ -57,7 +57,7 @@ mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth < /tmp/auth.sql
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD characters < /tmp/characters.sql
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD world < /tmp/world.sql
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD world < /tmp/battlepay.sql
-echo "Update sql files initialized"
+echo "Updating sql files initialized"
 
 echo "User cleanup"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth -e "DELETE FROM account"
@@ -67,7 +67,7 @@ echo "Adding admin user"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth -e "INSERT INTO account (id, username, sha_pass_hash) VALUES (1, 'admin', '8301316d0d8448a34fa6d0c6bf1cbfa2b4a1a93a');"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth -e "INSERT INTO account_access (id, gmlevel , RealmID) VALUES (1, 100, -1)";
 
-echo "Update realmd info"
+echo "Updating realmd info"
 mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth -e "DELETE FROM realmlist;"
 # mysql -u $MYSQL_USERNAME -p$MYSQL_PASSWORD auth -e "UPDATE realmlist SET NAME='$REALM_NAME',project_shortname='$REALM_NAME', address='$REALM_ADRESS', port='$REALM_PORT', icon='$REALM_ICON', flag='$REALM_FLAG', timezone='$REALM_TIMEZONE', allowedSecurityLevel='$REALM_SECURITY', population='$REALM_POP', gamebuild='$REALM_BUILD' WHERE id = '1';"
 
